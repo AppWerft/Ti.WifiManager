@@ -26,24 +26,23 @@ var WM = require("ti.wifimanager");
 
 - [x] WM.ACTION_PICK_WIFI_NETWORK
 
-Activity Action: Pick a Wi-Fi network to connect to. 
+_Activity Action: Pick a Wi-Fi network to connect to._ 
 
 - [x] WM.ACTION_REQUEST_SCAN_ALWAYS_AVAILABLE
 
-Activity Action: Show a system activity that allows the user to enable scans to be available even with Wi- turned off. 
-
+_Activity Action: Show a system activity that allows the user to enable scans to be available even with Wi- turned off. _
 
 - [x] WM.WifiConfiguration.STATUS_CURRENT
 
-this is the network we are currently connected to 
+_This is the network we are currently connected to_
 
 - [x] WM.WifiConfigurationStatus.STATUS_DISABLED
 
-supplicant will not attempt to use this network 
+_supplicant will not attempt to use this network 
 
 - [x] WM.WifiConfigurationStatus.STATUS_ENABLED
 
-supplicant will consider this network available for association 
+_supplicant will consider this network available for association 
 
 
 ### Requesting details from Wifi
