@@ -1,6 +1,6 @@
 # Ti.WifiManager
 
-Titanium module for exposing Androids's WifiManager. This is POC are heavy in progress.
+Titanium module for exposing Androids's WifiManager. Thanks to Jean-René Auger and Appwapp for sponsoring. <img src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ-aerX3QEAscr_2jMrxcK_HEmQNQx2EFdtS1QGLeThOqHc61j3" width=200 />
 
 <img src="https://www1-lw.xda-cdn.com/files/2012/08/Android-Wifi.png" width=200 />"
 
