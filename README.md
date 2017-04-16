@@ -1,6 +1,6 @@
 # Ti.WifiManager
 
-Titanium module for exposing Androids's WifiManager. 
+Titanium module for exposing Androids's WifiManager. The module can list the configured networks, can browse all access points. The module can connect to new AP. It supports WEP, WPA (PSK and Enterprise). The button method of WPS will supported.
 
 Thanks to Jean-René Auger and Appwapp for sponsoring. <img src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ-aerX3QEAscr_2jMrxcK_HEmQNQx2EFdtS1QGLeThOqHc61j3" width=100 />
 
