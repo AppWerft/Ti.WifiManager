@@ -2,17 +2,17 @@
 # this is your module manifest and used by Titanium
 # during compilation, packaging, distribution, etc.
 #
-version: 0.0.1
+version: 1.0.3
 apiversion: 3
 architectures: armeabi-v7a x86
-description: wifimanager
+description: WifiManager 
 author: Rainer Knöterich
-license: Specify your license
-copyright: Copyright (c) 2016 by 
+license: Apache
+copyright: Copyright (c) 2017 by Hamburger Appwerft 
 
 # these should not be edited
 name: wifimanager
-moduleid: de.appwerft.wifimanager
+moduleid: ti.wifimanager
 guid: 7461c4e2-ea1d-405f-bc31-4ce4c6bb6970
 platform: android
-minsdk: 6.1.0
+minsdk: 6.0.3
