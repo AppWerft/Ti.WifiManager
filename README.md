@@ -14,6 +14,14 @@ CHANGE_WIFI_MULTICAST_STATE.
 <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
 <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE"/>
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+
+<receiver android:name=".WifiChangeEventListener">
+<intent-filter>
+<action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+</intent-filter>
+</receiver>
+
 ```
 
 ## Usage
@@ -34,17 +42,26 @@ _Activity Action: Pick a Wi-Fi network to connect to._
 
 _Activity Action: Show a system activity that allows the user to enable scans to be available even with Wi- turned off. _
 
-- [x] WM.WifiConfiguration.STATUS_CURRENT
+### Config states
+- [x] WM.CONFIG_STATUS_CURRENT
 
 _This is the network we are currently connected to_
 
-- [x] WM.WifiConfigurationStatus.STATUS_DISABLED
+- [x] WM.CONFIG_STATUS_DISABLED
 
 _supplicant will not attempt to use this network 
 
-- [x] WM.WifiConfigurationStatus.STATUS_ENABLED
+- [x] WM.CONFIG_STATUS_ENABLED
 
 _supplicant will consider this network available for association 
+
+### Status Wifi
+- [x] WM.WIFI_STATE_ENABLED
+- [x] WM.WIFI_STATE_DISABLED
+- [x] WM.WIFI_STATE_ENABLING
+- [x] WM.WIFI_STATE_DISABLING
+
+
 
 
 ### Requesting details from Wifi
@@ -117,8 +134,8 @@ var configuration = MW.createWifiConfiguration({
 ```
 #### Testing of keys
 ```javascript
-MW.WifiConfiguration.isValidWEPKey();
-MW.WifiConfiguration.isValidBSSID();
+MW.isValidWEPKey();
+MW.isValidBSSID();
 
 
 ```
@@ -190,13 +207,13 @@ Result:
 
 ## Connect with WPS (Wifi Protection Setup)
 ```javascript
-WM.Wps.start({
-    setup : WM.Wps.PBC, // only this at this moment,
+WM.startWPS({
+    setup : WM.WPS_PBC, // only this at this moment,
     onconnect : function() {},
     onerror : function(){}
 });
 ```
 During connecting you can cancel the process with:
 ```javascript
-WM.Wps.cancel();
+WM.cancelWPS();
 ```
