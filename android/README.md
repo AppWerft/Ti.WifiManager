@@ -109,6 +109,20 @@ Wifi.addEventListener("wifi",function(event){
 });
 ```
 
+### Connnect with new AP by WPS 
+
+```javascript
+var Wifi = require("ti.wifimanager");
+Wifi.startWPS({
+    setup : Wifi.WPS_PBC, 
+    onconnected : function() {
+    },
+    onerror : function() {
+},
+
+})
+```
+
 ### Constants
 
 
