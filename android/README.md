@@ -70,6 +70,7 @@ Wifi.addEventListener("wifi",function(event){
     // Hurra!
     }
 });
+```
 
 ### Constants
 
