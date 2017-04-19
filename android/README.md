@@ -30,6 +30,46 @@ CHANGE_WIFI_MULTICAST_STATE.
 var WM = require("ti.wifimanager");
 ```
 
+## Receipts
+
+### Scanning all access points
+```javascript
+var Wifi = require("ti.wifimanager");
+Wifi.startWifiScan({
+    complete : function(scanned) {
+    console.log("runtime="+ scanned.runtime);
+    scanned.networks.forEach(function(ap) {
+        console.log(ap);
+    });
+});
+```
+### Getting all configured APIs
+```javascript
+var Wifi = require("ti.wifimanager");
+scanned.networks.forEach(function(ap) {
+console.log(ap);
+});
+```
+### Configure a new AP (after scanning current networks)
+```javascript
+var Wifi = require("ti.wifimanager");
+var AP = Wifi.createWifiConfiguration({
+    BSSID : "",
+    security : "PSK",
+    password : "sagichdirnicht"
+});
+var netId = Wifi.addNetwork(AP);
+```
+### Connnect with new AP (or older)
+
+```javascript
+var Wifi = require("ti.wifimanager");
+Wifi.enableNetwork(netId);
+Wifi.addEventListener("wifi",function(event){
+    if (event.online == true) {
+    // Hurra!
+    }
+});
 
 ### Constants
 
