@@ -101,13 +101,19 @@ var netId = Wifi.addNetwork(AP);
 
 ```javascript
 var Wifi = require("ti.wifimanager");
-Wifi.enableNetwork(netId);
-Wifi.addEventListener("wifi",function(event){
+Wifi.enableNetwork({
+    netId : netId,
+    change : function() {
+        // Hurra!
+    });
+});  
+Wifi.addEventListener("change",function(event){
     if (event.online == true) {
     // Hurra!
     }
 });
 ```
+You can use for callback the property in method or the event listener.
 
 ### Connnect with new AP by WPS (PBC)
 
@@ -127,15 +133,14 @@ Wifi.startWPS({
 ```javascript
 var Wifi = require("ti.wifimanager");
 Wifi.startWPS({
-setup : Wifi.WPS_PIN,
-onstarted : function(pin) {
-    alert(pin);
-},
-onconnected : function() {
-},
-onerror : function() {
-},
-
+    setup : Wifi.WPS_PIN,
+    onstarted : function(pin) {
+       alert(pin);
+    },
+    onconnected : function() {
+    },
+    onerror : function() {
+    },
 })
 ```
 
