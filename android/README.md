@@ -220,6 +220,7 @@ Result:
 
 - [x] MW.is5GHzBandSupported()
 - [x] MW.isDeviceToApRttSupported()
+- [x] MW.isLocationServiceEnabled();
 - [x] MW.isEnhancedPowerReportingSupported()
 - [x] MW.isP2pSupported() 
 - [x] MW.isPreferredNetworkOffloadSupported()
