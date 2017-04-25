@@ -82,23 +82,42 @@ Typical result:
 ```javascript
 var Wifi = require("ti.wifimanager");
 var AP = Wifi.createWifiConfiguration({
-    BSSID : "",
-    security : "PSK",
+    BSSID : "f8:4f:57:37:f4:2f",
+    security : "PSK", // optional, in most case automatic
     password : "sagichdirnicht"
 });
 var netId = Wifi.addNetwork(AP);
 ```
+
+In case of enterprise WPA you need additional a `name`:
+```javascript
+var Wifi = require("ti.wifimanager");
+var AP = Wifi.createWifiConfiguration({
+    BSSID : "f8:4f:57:37:f4:2f",
+    name : "DigitalTransformationOfficer"
+    password : "sagichdirnicht"
+});
+var netId = Wifi.addNetwork(AP);
+```
+
+
 ### Connnect with new AP (or older)
 
 ```javascript
 var Wifi = require("ti.wifimanager");
-Wifi.enableNetwork(netId);
-Wifi.addEventListener("wifi",function(event){
+Wifi.enableNetwork({
+    netId : netId,
+    change : function() {
+        // Hurra!
+    });
+});  
+Wifi.addEventListener("change",function(event){
     if (event.online == true) {
     // Hurra!
     }
 });
 ```
+You can use for callback the property in method or the event listener.
 
 ### Connnect with new AP by WPS (PBC)
 
@@ -118,15 +137,14 @@ Wifi.startWPS({
 ```javascript
 var Wifi = require("ti.wifimanager");
 Wifi.startWPS({
-setup : Wifi.WPS_PIN,
-onstarted : function(pin) {
-    alert(pin);
-},
-onconnected : function() {
-},
-onerror : function() {
-},
-
+    setup : Wifi.WPS_PIN,
+    onstarted : function(pin) {
+       alert(pin);
+    },
+    onconnected : function() {
+    },
+    onerror : function() {
+    },
 })
 ```
 
@@ -305,10 +323,27 @@ Result:
 - [x] operatorFriendlyName
 
 ## Connect with WPS (Wifi Protection Setup)
+
+### WPS with Button (PBC)
 ```javascript
 WM.startWPS({
-    setup : WM.WPS_PBC, // only this at this moment,
-    onconnect : function() {},
+    setup : WM.WPS_PBC, 
+    onconnect : function() {
+        console.log("Hurra!");
+    },
+    onerror : function(){}
+});
+```
+### WPS with Pin 
+```javascript
+WM.startWPS({
+    setup : WM.WPS_PIN,
+    onadded : function(pin) {
+        alert("Please add this pin " + pin +   " to your AccessPoint");
+    }
+    onconnect : function() {
+        console.log("Hurra!");
+    },
     onerror : function(){}
 });
 ```
