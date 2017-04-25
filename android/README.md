@@ -15,14 +15,9 @@ CHANGE_WIFI_MULTICAST_STATE.
 <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
 <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE"/>
 <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-
-<receiver android:name=".WifiChangeEventListener">
-<intent-filter>
-<action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-</intent-filter>
-</receiver>
-
 ```
+The location permission is critical, you need a runtime permission!
+
 
 ## Usage
 
@@ -46,20 +41,16 @@ Wifi.startWifiScan({
 Typical result:
 ```xml
 [
- {"RSSI":"-57","SSID":"hamburg.freifunk.net","FREQ":"2432","CAP":"[ESS]","BSSID":"ce:33:32:ef:b7:98"},
- {"RSSI":"-16","SSID":"iKnöterich","FREQ":"2462","CAP":"[WPA2-PSK-CCMP][ESS]","BSSID":"ea:85:50:ac:d9:17"},
- {"RSSI":"-67","SSID":"o2-WLAN31","FREQ":"2447","CAP":"[WPA2-PSK-CCMP-preauth][WPS][ESS][BLE]","BSSID":"9c:80:df 62:f3:46"}, 
- {"RSSI":"-70","SSID":"100974","FREQ":"2467","CAP":"[WPA-PSK-TKIP][WPA2-PSK-CCMP][WPS][ESS]","BSSID":"00:24:fe:a2:a3:ae"}, 
- {"RSSI":"-75","SSID":"FRITZ!Box 7490","FREQ":"2437","CAP":"[WPA2-PSK-CCMP][WPS][ESS]","BSSID":"38:10:d5:44:c4:1e"}, 
- {"RSSI":"-81","SSID":"Kasse","FREQ":"2462","CAP":"[WPA2-PSK-CCMP][ESS]","BSSID":"00:f7:6f:cd:d3:66"}, {"RSSI":"-83","SSID":"Kasse","FREQ":"2462","CAP":"[WPA2-PSK-CCMP][ESS]","BSSID":"4c:32:75:c6:e7:7c"}, 
- {"RSSI":"-87","SSID":"FRITZ!Box 7490","FREQ":"5300","CAP":"[WPA2-PSK-CCMP][WPS][ESS]","BSSID":"38:10:d5:44:c4:1f"}, 
- {"RSSI":"-90","SSID":"WLAN-E66F15","FREQ":"5220","CAP":"[WPA2-PSK-CCMP][WPS][ESS]","BSSID":"9c:80:df:e6:6f:af"},
- {"RSSI":"-91","SSID":"Kasse","FREQ":"5700","CAP":"[WPA2-PSK-CCMP][ESS]","BSSID":"28:cf:e9:87:17:15"}, 
- {"RSSI":"-87","SSID":"WLAN-360639","FREQ":"2452","CAP":"[WPA-PSK-CCMP+TKIP][WPA2-PSK-CCMP+TKIP][ESS]","BSSID":"2a:a4:3c:95:66:5b"},
- {"RSSI":"-75","SSID":"hamburg.freifunk.net","FREQ":"5540","CAP":"[ESS]","BSSID":"04:18:d6:0c:c9:d1"}, 
- {"RSSI":"-75","SSID":"hamburg.freifunk.net","FREQ":"2452","CAP":"[ESS]","BSSID":"e8:94:f6:cd:6c:65"}, 
- {"RSSI":"-83","SSID":"Telekom","FREQ":"2447","CAP":"[ESS]","BSSID":"62:02:b4:9e:b1:bc"}, 
- {"RSSI":"-87","SSID":"Vodafone Free WiFi","FREQ":"5680","CAP":"[ESS][BLE]","BSSID":"f8:4f:57:37:f4:2f"}
+{"timestamp":388418592430,"ssid":"Elysium","bssid":"38:10:d5:cf:bd:0e","wps":true,"rssi":"-51","security":"PSK","freq":"5240"}
+{"timestamp":388418592418,"ssid":"Elysium","bssid":"38:10:d5:cf:bd:0d","wps":true,"rssi":"-47","security":"PSK","freq":"2437"}
+{"timestamp":388418592444,"ssid":"o2-WLAN93","bssid":"1c:74:0d:27:92:f1","wps":true,"rssi":"-57","security":"PSK","freq":"2442"}
+{"timestamp":388418592455,"ssid":"o2-WLAN93","bssid":"1c:74:0d:27:92:f2","wps":true,"rssi":"-63","security":"PSK","freq":"5180"}
+{"timestamp":388418592477,"ssid":"o2-WLAN77","bssid":"88:03:55:10:b2:07","wps":true,"rssi":"-67","security":"PSK","freq":"2467"}
+{"timestamp":388418592398,"ssid":"WILHELM.TEL-YWY52M7T","bssid":"34:31:c4:e4:2a:0e","wps":true,"rssi":"-43","security":"PSK","freq":"2422"}
+{"timestamp":388418592466,"ssid":"WLAN-309178","bssid":"94:4a:0c:74:57:c3","wps":true,"rssi":"-69","security":"PSK","freq":"2412"}
+{"timestamp":388418592510,"ssid":"WILHELM.TEL-J52R996K","bssid":"08:96:d7:02:2f:e4","wps":true,"rssi":"-89","security":"PSK","freq":"2462"}
+{"timestamp":388418592499,"ssid":"HP-Print-6C-Photosmart 6520","bssid":"64:51:06:da:66:6c","wps":false,"rssi":"-88","security":"PSK","freq":"2437"}
+{"timestamp":388418592489,"ssid":"WILHELM.TEL-267875C4","bssid":"5c:49:79:66:6a:0c","wps":true,"rssi":"-80","security":"PSK","freq":"2412"}
 ]
 ```
 
