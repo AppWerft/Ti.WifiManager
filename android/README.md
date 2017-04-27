@@ -190,7 +190,9 @@ _supplicant will consider this network available for association
 - [x] WM.WIFI_STATE_ENABLING
 - [x] WM.WIFI_STATE_DISABLING
 
-
+### Removing networks
+- [x] removeNetwork(networkId)
+- [x] removeAllNetworks()
 
 
 ### Requesting details from Wifi

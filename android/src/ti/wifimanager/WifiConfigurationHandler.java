@@ -9,12 +9,14 @@
 package ti.wifimanager;
 
 import java.util.Arrays;
+import android.Manifest;
 
 import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.annotations.Kroll;
 import org.appcelerator.kroll.common.Log;
 import org.appcelerator.titanium.TiApplication;
 
+import android.Manifest;
 import android.content.Context;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiConfiguration.KeyMgmt;
@@ -24,30 +26,33 @@ import android.os.Build;
 
 public class WifiConfigurationHandler {
 	private static final String LCAT = WifimanagerModule.LCAT;
-	private static WifiConfiguration wc = new WifiConfiguration();;
+	private static WifiConfiguration wifiConfig = new WifiConfiguration();;
 	private static String bssid;
 	private static String ssid;
 	private static String name;
 	private static String password;
 	private static int priority = 2;
 	private static boolean persist = true;
-
 	private static String security;
 	private static Context ctx = TiApplication.getInstance()
 			.getApplicationContext();
 	private static String[] securities = { "PSK", "WEP", "EAP", "Open" };
-	private static boolean VERBOSE = false;
+	private static boolean VERBOSE = true;
+	private static WifiManager wifi;
 
 	public WifiConfigurationHandler() {
 		super();
 	}
 
-	public static int build(KrollDict opts) {
-
+	public static int addNetwork(KrollDict opts) {
+		wifi = (WifiManager) ctx.getSystemService(Context.WIFI_SERVICE);
+		if (wifi.isWifiEnabled() == false) {
+			wifi.setWifiEnabled(true);
+		}
 		if (opts.containsKeyAndNotNull("bssid")) {
 			bssid = (Utils.isValidMac(opts.getString("bssid"))) ? opts
 					.getString("bssid") : null;
-			Log.d(LCAT, "bssid=" + bssid);
+			wifiConfig.BSSID = StringUtils.addQuotes(bssid);
 		}
 		if (opts.containsKeyAndNotNull("security")) {
 			security = (Utils.isValidSecurity(opts.getString("security"))) ? opts
@@ -76,12 +81,12 @@ public class WifiConfigurationHandler {
 		if (opts.containsKeyAndNotNull("preSharedKey")) {
 			password = opts.getString("preSharedKey");
 		}
-		if (bssid != null) {
-			return createWifiConfiguration();
-		} else
-			Log.e(LCAT, "bssid was invalid");
-		return -2;
-
+		if (bssid != null || ssid != null) {
+			return createWifiConfigurationAndAdd();
+		} else {
+			Log.e(LCAT, "bssid/ssid was invalid");
+			return -2;
+		}
 	}
 
 	@Kroll.method
@@ -99,93 +104,120 @@ public class WifiConfigurationHandler {
 		return "ti.wifimanager.WifiConfigurationProxy";
 	}
 
-	private static int createWifiConfiguration() {
-		Log.d(LCAT,
-				"try to createConfByBBSID, iterating thru all scanned results. Count="
-						+ WifimanagerModule.wifiManager.getScanResults().size());
+	private static String getSecurityOfBSSID(String bssid) {
 		for (android.net.wifi.ScanResult scanResult : WifimanagerModule.wifiManager
 				.getScanResults()) {
 			if (scanResult.BSSID.equals(bssid)) {
-				Log.d(LCAT, "BSSID found, create new empty configuration");
-				wc.BSSID = String.format("\"%s\"", bssid);
-
-				switch (Utils.getScanResultSecurity(scanResult)) {
-				case WifimanagerModule.WEP:
-					Log.d(LCAT,
-							"Security WEP, settimng your password to first of wepKey");
-					// test if secret is 10,26 or 59 digit key
-					wc.wepKeys[0] = "\"" + password + "\"";
-					wc.wepTxKeyIndex = 0;
-					wc.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
-					wc.allowedGroupCiphers
-							.set(WifiConfiguration.GroupCipher.WEP40);
-					break;
-				case WifimanagerModule.EAP:
-					Log.d(LCAT, "Security EAP");
-					WifiEnterpriseConfig enterpriseConfig = new WifiEnterpriseConfig();
-					wc.allowedKeyManagement.set(KeyMgmt.WPA_EAP);
-					wc.allowedKeyManagement.set(KeyMgmt.IEEE8021X);
-					if (name != null)
-						enterpriseConfig.setIdentity(name);
-					if (password != null)
-						enterpriseConfig.setPassword(password);
-					enterpriseConfig
-							.setEapMethod(WifiEnterpriseConfig.Eap.PEAP);
-					wc.enterpriseConfig = enterpriseConfig;
-					break;
-				case WifimanagerModule.OPEN:
-					wc.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
-					break;
-				case WifimanagerModule.PSK:
-					if (password.length() < 8) {
-						Log.e(LCAT, "PSK too short, min 8 characters");
-						return -2;
-					}
-					wc.preSharedKey = String.format("\"%s\"", password);
-					Log.d(LCAT, "setting bssid to " + wc.BSSID);
-					wc.priority = priority;
-					if (ssid != null) {
-						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-							wc.SSID = ssid;
-						} else {
-							wc.SSID = String.format("\"%s\"", ssid);
-						}
-						Log.d(LCAT, "setting ssid to " + wc.SSID);
-					}
-					wc.hiddenSSID = true;
-					wc.status = WifiConfiguration.Status.ENABLED;
-					if (VERBOSE) {
-						wc.allowedGroupCiphers
-								.set(WifiConfiguration.GroupCipher.TKIP);
-						wc.allowedGroupCiphers
-								.set(WifiConfiguration.GroupCipher.CCMP);
-						wc.allowedKeyManagement
-								.set(WifiConfiguration.KeyMgmt.WPA_PSK);
-						wc.allowedPairwiseCiphers
-								.set(WifiConfiguration.PairwiseCipher.TKIP);
-						wc.allowedPairwiseCiphers
-								.set(WifiConfiguration.PairwiseCipher.CCMP);
-						wc.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
-					}
-					WifiManager wifi = (WifiManager) ctx
-							.getSystemService(Context.WIFI_SERVICE);
-					wifi.setWifiEnabled(true);
-					int id = 0;
-					if (wifi.isWifiEnabled())
-						id = wifi.addNetwork(wc);
-					else
-						Log.e(LCAT,
-								"Cannot add network because wifi is disabled");
-					Log.d(LCAT, "id=" + id + "\n\n");
-					if (persist)
-						wifi.saveConfiguration();
-					return id;
-				default:
-					Log.w(LCAT, "no matching BSSID in results found");
-
-				}
+				return Utils.getScanResultSecurity(scanResult);
 			}
+		}
+		return null;
+	}
+
+	private static String getSecurityOfSSID(String ssid) {
+		for (android.net.wifi.ScanResult scanResult : WifimanagerModule.wifiManager
+				.getScanResults()) {
+			if (scanResult.SSID.equals(ssid)) {
+				return Utils.getScanResultSecurity(scanResult);
+			}
+		}
+		return null;
+	}
+
+	private static int createWifiConfigurationAndAdd() {
+		if (security == null && bssid != null)
+			security = getSecurityOfBSSID(bssid);
+		if (security == null && ssid != null)
+			security = getSecurityOfSSID(ssid);
+		Log.d(LCAT, "security: " + security);
+		// Utils.hasPermission(android.Manifest.permission.OVERRIDE_WIFI_CONFIG);
+		switch (security) {
+		case WifimanagerModule.WEP:
+			Log.d(LCAT,
+					"Security WEP, settimng your password to first of wepKey");
+			// test if secret is 10,26 or 59 digit key
+			wifiConfig.wepKeys[0] = "\"" + password + "\"";
+			wifiConfig.wepTxKeyIndex = 0;
+			wifiConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+			wifiConfig.allowedGroupCiphers
+					.set(WifiConfiguration.GroupCipher.WEP40);
+			break;
+		case WifimanagerModule.EAP:
+			Log.d(LCAT, "Security EAP");
+			WifiEnterpriseConfig enterpriseConfig = new WifiEnterpriseConfig();
+			wifiConfig.allowedKeyManagement.set(KeyMgmt.WPA_EAP);
+			wifiConfig.allowedKeyManagement.set(KeyMgmt.IEEE8021X);
+			if (name != null)
+				enterpriseConfig.setIdentity(name);
+			if (password != null)
+				enterpriseConfig.setPassword(password);
+			enterpriseConfig.setEapMethod(WifiEnterpriseConfig.Eap.PEAP);
+			wifiConfig.enterpriseConfig = enterpriseConfig;
+			break;
+		case WifimanagerModule.OPEN:
+			wifiConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+			break;
+		case WifimanagerModule.PSK:
+			if (password.length() < 8) {
+				Log.e(LCAT, "PSK too short, min 8 characters");
+				return -2;
+			}
+			wifiConfig.preSharedKey = String.format("\"%s\"", password);
+			Log.d(LCAT,
+					"setting preSharedKey to "
+							+ String.format("\"%s\"", password));
+			Log.d(LCAT, "setting bssid to " + wifiConfig.BSSID);
+			wifiConfig.priority = priority;
+			wifiConfig.SSID = StringUtils.addQuotes(ssid);
+			Log.d(LCAT, "setting ssid to " + wifiConfig.SSID);
+			wifiConfig.hiddenSSID = false;
+			wifiConfig.status = WifiConfiguration.Status.ENABLED;
+			if (VERBOSE) {
+				wifiConfig.allowedAuthAlgorithms.clear();
+				wifiConfig.allowedGroupCiphers.clear();
+				wifiConfig.allowedKeyManagement.clear();
+				wifiConfig.allowedPairwiseCiphers.clear();
+				wifiConfig.allowedProtocols.clear();
+
+				wifiConfig.allowedAuthAlgorithms
+						.set(WifiConfiguration.AuthAlgorithm.OPEN);
+				wifiConfig.allowedGroupCiphers
+						.set(WifiConfiguration.GroupCipher.TKIP);
+				wifiConfig.allowedGroupCiphers
+						.set(WifiConfiguration.GroupCipher.CCMP);
+				wifiConfig.allowedKeyManagement
+						.set(WifiConfiguration.KeyMgmt.WPA_PSK);
+				wifiConfig.allowedPairwiseCiphers
+						.set(WifiConfiguration.PairwiseCipher.TKIP);
+				wifiConfig.allowedPairwiseCiphers
+						.set(WifiConfiguration.PairwiseCipher.CCMP);
+				wifiConfig.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
+				wifiConfig.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
+
+			}
+
+			int id = 0;
+			if (wifi.isWifiEnabled()) {
+				Log.d(LCAT,
+						"Wifi is enabled, pingSupplicant="
+								+ wifi.pingSupplicant());
+				Log.d(LCAT, wifiConfig.toString());
+				id = wifi.addNetwork(wifiConfig);
+			}
+
+			else
+				Log.e(LCAT, "Cannot add network because wifi is disabled");
+			Log.d(LCAT, "id=" + id + "\n\n");
+			if (persist)
+				wifi.saveConfiguration();
+			return id;
+		default:
+			Log.w(LCAT, "no matching BSSID in results found");
+
 		}
 		return -2;
 	}
-}// http://stackoverflow.com/questions/32120710/how-to-connect-to-wifi-with-a-specific-bssid-android
+}
+// http://stackoverflow.com/questions/9871762/android-turning-on-wifi-programmatically
+// http://stackoverflow.com/questions/12016918/android-wifimanager-addnetwork-returns-1
+// http://stackoverflow.com/questions/32120710/how-to-connect-to-wifi-with-a-specific-bssid-android
