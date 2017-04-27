@@ -9,11 +9,8 @@
 package ti.wifimanager;
 
 import java.util.Arrays;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.appcelerator.kroll.KrollDict;
-import org.appcelerator.kroll.KrollProxy;
 import org.appcelerator.kroll.annotations.Kroll;
 import org.appcelerator.kroll.common.Log;
 import org.appcelerator.titanium.TiApplication;
@@ -21,7 +18,6 @@ import org.appcelerator.titanium.TiApplication;
 import android.content.Context;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiConfiguration.KeyMgmt;
-import android.net.wifi.ScanResult;
 import android.net.wifi.WifiEnterpriseConfig;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -146,6 +142,7 @@ public class WifiConfigurationHandler {
 						return -2;
 					}
 					wc.preSharedKey = String.format("\"%s\"", password);
+					Log.d(LCAT, "setting bssid to " + wc.BSSID);
 					wc.priority = priority;
 					if (ssid != null) {
 						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -153,6 +150,7 @@ public class WifiConfigurationHandler {
 						} else {
 							wc.SSID = String.format("\"%s\"", ssid);
 						}
+						Log.d(LCAT, "setting ssid to " + wc.SSID);
 					}
 					wc.hiddenSSID = true;
 					wc.status = WifiConfiguration.Status.ENABLED;

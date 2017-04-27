@@ -57,7 +57,15 @@ Typical result:
 {"timestamp":388418592489,"ssid":"WILHELM.TEL-267875C4","bssid":"5c:49:79:66:6a:0c","wps":true,"rssi":"-80","security":"PSK","freq":"2412"}
 ]
 ```
-
+### Methods of scanResult
+- [x] getBSSID()
+- [x] getSSID()
+- [x] getFrequency()
+- [x] getSecurity()
+- [x] getTimes()
+- [x] gethasWPS()
+- [x] getRSSI()
+- [x] toString()
 
 ### Getting all configured APIs
 ```javascript
