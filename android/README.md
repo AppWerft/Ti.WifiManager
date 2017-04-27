@@ -66,6 +66,8 @@ Typical result:
 - [x] gethasWPS()
 - [x] getRSSI()
 - [x] toString()
+- [x] setPassword()
+
 
 ### Getting all configured APIs
 ```javascript
@@ -99,6 +101,11 @@ var networkId = Wifi.addNetwork({
     password : "sagichdirnicht",
     persist : true // is default
 });
+```
+Alternativly you can use a scanResult to add a network:
+```javascript
+var networkId = Wifi.addNetwork(scanResult.setPasswort("seehrGehe1m,kommtkeinerdrauf"));
+
 ```
 
 In case of enterprise WPA you need additional a `name`:
