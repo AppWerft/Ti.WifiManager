@@ -29,7 +29,7 @@ import android.os.Build;
 @Kroll.proxy(creatableInModule = WifimanagerModule.class)
 public class WifiConfigurationProxy extends KrollProxy {
 	private static final String LCAT = WifimanagerModule.LCAT;
-	public WifiConfiguration wc;
+	public WifiConfiguration wc = new WifiConfiguration();;
 	private String bssid;
 	private String ssid;
 	private String name;
@@ -38,7 +38,6 @@ public class WifiConfigurationProxy extends KrollProxy {
 	private String security;
 	private Context ctx = TiApplication.getInstance().getApplicationContext();
 	private String[] securities = { "PSK", "WEP", "EAP", "Open" };
-	ScanResult scanResult;
 
 	public WifiConfigurationProxy() {
 		super();
@@ -51,21 +50,15 @@ public class WifiConfigurationProxy extends KrollProxy {
 	@Override
 	public void handleCreationDict(
 			@Kroll.argument(optional = true) KrollDict opts) {
-
 		super.handleCreationDict(opts);
-
-		wc = new WifiConfiguration();
-
 		if (opts.containsKeyAndNotNull("bssid")) {
 			bssid = (Utils.isValidMac(opts.getString("bssid"))) ? opts
 					.getString("bssid") : null;
 			Log.d(LCAT, "bssid=" + bssid);
 		}
 		if (opts.containsKeyAndNotNull("security")) {
-			Log.d(LCAT, "security=" + security);
 			security = (Utils.isValidSecurity(opts.getString("security"))) ? opts
 					.getString("security") : null;
-			// only allowed:
 			if (!Arrays.asList(securities).contains(security))
 				security = null;
 		}
@@ -97,7 +90,6 @@ public class WifiConfigurationProxy extends KrollProxy {
 	@Kroll.method
 	public boolean isValidWEPKey(String wepKey) {
 		return WEPKey.isValid(wepKey);
-
 	}
 
 	@Kroll.method
@@ -118,11 +110,8 @@ public class WifiConfigurationProxy extends KrollProxy {
 				.getScanResults()) {
 			if (scanResult.BSSID.equals(bssid)) {
 				Log.d(LCAT, "BSSID found, create new empty configuration");
-				wc.BSSID = "\"" + bssid + "\""; // Please note the quotes.
-												// String
-												// should contain ssid
-												// in quotes
-				// wc.SSID = scanResult.SSID;
+				wc.BSSID = String.format("\"%s\"", bssid);
+
 				switch (Utils.getScanResultSecurity(scanResult)) {
 				case WifimanagerModule.WEP:
 					Log.d(LCAT,
@@ -158,15 +147,14 @@ public class WifiConfigurationProxy extends KrollProxy {
 					Log.d(LCAT,
 							"found *security* PSK, setting of preSharedKey to password "
 									+ password);
-					wc.preSharedKey = "\"" + password + "\"";
+					wc.preSharedKey = String.format("\"%s\"", password);
 					wc.priority = priority;
 					if (ssid != null) {
 						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 							wc.SSID = ssid;
 						} else {
-							wc.SSID = "\"" + ssid + "\"";
+							wc.SSID = String.format("\"%s\"", ssid);
 						}
-
 					}
 					wc.hiddenSSID = true;
 					wc.status = WifiConfiguration.Status.ENABLED;
