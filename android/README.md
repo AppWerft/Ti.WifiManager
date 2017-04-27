@@ -34,9 +34,12 @@ var Wifi = require("ti.wifimanager");
 Wifi.startWifiScan({
     complete : function(scanned) {
     console.log("runtime="+ scanned.runtime);
-    scanned.networks.forEach(function(ap) {
-        console.log(ap);
-    });
+    if (scanned.scanResults) {
+        scanned.scanResults.forEach(function(scanResult) {
+        if (scanResult) {
+            console.log("bssid=" + scanResult.getBSSID() + "   rssi=" + scanResult.getRSSI() + "   ssid=" + scanResult.getSSID());
+        }
+    }
 });
 ```
 Typical result:
@@ -82,23 +85,23 @@ Typical result:
 ### Configure a new AP (after scanning current networks)
 ```javascript
 var Wifi = require("ti.wifimanager");
-var AP = Wifi.createWifiConfiguration({
-    BSSID : "f8:4f:57:37:f4:2f",
+var networkId = Wifi.addNetwork({
+    bssid : "f8:4f:57:37:f4:2f",
     security : "PSK", // optional, in most case automatic
-    password : "sagichdirnicht"
+    password : "sagichdirnicht",
+    persist : true // is default
 });
-var netId = Wifi.addNetwork(AP);
 ```
 
 In case of enterprise WPA you need additional a `name`:
 ```javascript
 var Wifi = require("ti.wifimanager");
-var AP = Wifi.createWifiConfiguration({
+var AP = Wifi.addNetwork({
     BSSID : "f8:4f:57:37:f4:2f",
     name : "DigitalTransformationOfficer"
     password : "sagichdirnicht"
 });
-var netId = Wifi.addNetwork(AP);
+
 ```
 
 
