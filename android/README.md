@@ -15,6 +15,7 @@ CHANGE_WIFI_MULTICAST_STATE.
 <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
 <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE"/>
 <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+<uses-permission android:name="android.pemissions.OVERRIDE_WIFI_CONFIG" />
 ```
 The location permission is critical, you need a runtime permission!
 
@@ -218,6 +219,7 @@ Result:
 
 ### Other methods for inspecting the net
 
+- [x] MW.saveConfiguration() // to persist new configuration
 - [x] MW.is5GHzBandSupported()
 - [x] MW.isDeviceToApRttSupported()
 - [x] MW.isLocationServiceEnabled();
