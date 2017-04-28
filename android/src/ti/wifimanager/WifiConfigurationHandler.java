@@ -45,7 +45,6 @@ public class WifiConfigurationHandler {
 		if (opts.containsKeyAndNotNull("bssid")) {
 			bssid = (Utils.isValidMac(opts.getString("bssid"))) ? opts
 					.getString("bssid") : null;
-			wifiConfig.BSSID = StringUtils.addQuotes(bssid);
 		}
 		if (opts.containsKeyAndNotNull("security")) {
 			security = (Utils.isValidSecurity(opts.getString("security"))) ? opts
@@ -116,6 +115,7 @@ public class WifiConfigurationHandler {
 	}
 
 	private static int createWifiConfigurationAndAdd() {
+		int networkId = -2;
 		if (security == null && bssid != null)
 			security = getSecurityOfBSSID(bssid);
 		if (security == null && ssid != null)
@@ -157,18 +157,19 @@ public class WifiConfigurationHandler {
 			}
 			wifiConfig.preSharedKey = StringUtils.addQuotes(password);
 			Log.d(LCAT,
-					"setting preSharedKey to "
+					"setting preSharedKey 🔐  to "
 							+ StringUtils.addQuotes(password));
 			// BSSID management
 			if (bssid != null) {
-				Log.d(LCAT, "setting bssid to " + wifiConfig.BSSID);
-				wifiConfig.BSSID = StringUtils.addQuotes(bssid);
+				Log.d(LCAT, "setting bssid to " + bssid);
+				wifiConfig.BSSID = bssid;
 			}
 			// SSID management
 			if (ssid != null) {
 				Log.d(LCAT, "setting ssid to " + wifiConfig.SSID);
 				wifiConfig.SSID = StringUtils.addQuotes(ssid);
-			}
+			} else
+				Log.w(LCAT, "ssid was undefined");
 
 			// wifiConfig.hiddenSSID = false;
 			// wifiConfig.status = WifiConfiguration.Status.ENABLED;
@@ -200,14 +201,14 @@ public class WifiConfigurationHandler {
 				wifiConfig.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
 				wifiConfig.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
 			}
-			int id = -1;
+
 			if (wifi.isWifiEnabled()) {
 				Log.d(LCAT,
 						"Wifi is enabled, pingSupplicant="
 								+ wifi.pingSupplicant());
 				Log.d(LCAT, wifiConfig.toString());
 				try {
-					id = wifi.addNetwork(wifiConfig);
+					networkId = wifi.addNetwork(wifiConfig);
 				} catch (NullPointerException e) {
 					Log.e(LCAT, "Weird!! Really!! What's wrong??", e);
 					// Weird!! Really!!
@@ -216,15 +217,15 @@ public class WifiConfigurationHandler {
 				}
 			} else
 				Log.e(LCAT, "Cannot add network because wifi is disabled");
-			Log.d(LCAT, "id=" + id + "\n\n");
-			if (persist) {
+			Log.d(LCAT, "networkId=" + networkId + "\n");
+			if (persist && networkId > -1) {
 				Log.d(LCAT, " new WifiConfiguration will saved");
 				wifi.saveConfiguration();
 			}
-			return id;
+			return networkId;
 		default:
 		}
-		return -2;
+		return networkId;
 	}
 }
 // http://stackoverflow.com/questions/8392747/setup-wifi-programatically-using-wpa-security-in-android-tablet

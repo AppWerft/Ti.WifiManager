@@ -189,3 +189,4 @@ public class WifiConfigurationProxy extends KrollProxy {
 		}
 	}
 }// http://stackoverflow.com/questions/32120710/how-to-connect-to-wifi-with-a-specific-bssid-android
+
